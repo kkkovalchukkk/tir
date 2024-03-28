@@ -1,4 +1,6 @@
 window.addEventListener('DOMContentLoaded', () => {
+  // Получение всех DOM-элементов
+
   const totalClicksEl = document.querySelector('.scores__shots');
   const totalScoresEl = document.querySelector('.scores__goals');
   const firstRoundEl = document.querySelector('.first-round');
@@ -12,10 +14,13 @@ window.addEventListener('DOMContentLoaded', () => {
   const winScreenEl = document.querySelector('.win');
   const winBtnEl = document.querySelector('.win__btn');
 
+  //  Глобальные переменные (кол-во кликов, попаданий и тд)
   let totalClicks = 0;
   let totalShoots = 0;
   let isGamesStarted = false;
   let currentRound = 0;
+
+  // Сброс всех значений (очков и попаданий)
 
   function resetClicksAndScores() {
     totalClicks = 0;
@@ -24,11 +29,15 @@ window.addEventListener('DOMContentLoaded', () => {
     totalScoresEl.textContent = 0;
   }
 
+  // Выключение всех экранов
+
   function resetRounds() {
     firstRoundEl.classList.add('hidden');
     secondRoundEl.classList.add('hidden');
     thirdRoundEl.classList.add('hidden');
   }
+
+  // Генерация рандомной позиции для пузыря
 
   function getRandomPosition() {
     const width = window.innerWidth;
@@ -37,6 +46,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const randomY = Math.random() * (height - 142); // 30 - высота элемента
     return [randomX, randomY];
   }
+
+  // Создание пузыря в рандомном месте
 
   function createTarget() {
     const [x, y] = getRandomPosition();
@@ -54,6 +65,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 500);
   }
 
+  // Вешаем курсор прицел
+
   function getCursor() {
     const cursor = document.createElement('div');
     const cursorImg = document.createElement('img');
@@ -70,30 +83,50 @@ window.addEventListener('DOMContentLoaded', () => {
     document.body.style.cursor = 'none';
   }
 
+  // Показать экран проигрыша
+
   function showLoseScreen() {
     loseScreenEl.classList.remove('hidden');
   }
+
+  // Показть экран выйгрыша
 
   function showWinScreen() {
     winScreenEl.classList.remove('hidden');
   }
 
+  // Спрятать экран выйгрыша
+
   function hideWinScreen() {
     winScreenEl.classList.add('hidden');
   }
 
+  // Логика первого раунда
+
   function firstRoundLogic(e) {
+    // Выставляем первый раунд, запускаем игру
+
     currentRound = 1;
     isGamesStarted = true;
+
+    // Если попал
+
     if (e.target.classList.contains('target')) {
+      // Скрываем пузырь
+
       e.target.classList.add('hidden');
       totalShoots++;
     }
 
+    // Увеличиваем кол-во кликов
     totalClicks++;
+
+    // Выводим их в UI
+
     totalClicksEl.textContent = totalClicks;
     totalScoresEl.textContent = totalShoots;
-    if (totalClicks >= 10) {
+
+    if (totalClicks >= 10 && totalShoots < 6) {
       isGamesStarted = false;
       stopGame();
       showLoseScreen();
@@ -104,6 +137,8 @@ window.addEventListener('DOMContentLoaded', () => {
       showWinScreen();
     }
   }
+
+  // Логика второго раунда
 
   function secondRoundLogic(e) {
     currentRound = 2;
@@ -128,6 +163,8 @@ window.addEventListener('DOMContentLoaded', () => {
       showWinScreen();
     }
   }
+
+  // Логика третьего раунда
 
   function thirdRoundLogic(e) {
     currentRound = 3;
@@ -157,10 +194,14 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Запуск первого раунда
+
   function goFirstRound() {
     hideWinScreen();
     window.addEventListener('click', firstRoundLogic);
   }
+
+  // Запуск второго раунда
 
   function goSecondRound() {
     hideWinScreen();
@@ -168,6 +209,8 @@ window.addEventListener('DOMContentLoaded', () => {
     window.removeEventListener('click', firstRoundLogic);
     window.addEventListener('click', secondRoundLogic);
   }
+
+  // Запуск третьего раунда
 
   function goThirdRound() {
     hideWinScreen();
@@ -178,6 +221,8 @@ window.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', thirdRoundLogic);
   }
 
+  // Запуск игры
+
   function startGame() {
     firstScreenEl.classList.add('hidden');
     setTimeout(() => {
@@ -185,19 +230,28 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 100);
   }
 
+  // Стоп игры
+
   function stopGame() {
     window.removeEventListener('click', firstRoundLogic);
     firstRoundEl.classList.add('hidden');
     resetClicksAndScores();
   }
 
-  runGameBtnEl.addEventListener('click', startGame);
-  loseBtnEl.addEventListener('click', () => window.location.reload());
+  // Обработчики события на кнопку продолжения игры и кнопку проигрыша
+
+  runGameBtnEl.addEventListener('click', startGame); // Запускаем игру на клик по кнопке старта
+  loseBtnEl.addEventListener('click', () => window.location.reload()); // Перезагружаем страницу при нажатии на кнопку проигрыша
+
+  // Кнопка победы
 
   winBtnEl.addEventListener('click', () => {
     resetClicksAndScores();
     resetRounds();
+    // Увеличиваем раунд
     currentRound++;
+
+    // Проверяем какой сейчас раунд, в зависимости от этого запускаем нужную логику
     switch (currentRound) {
       case 2:
         setTimeout(() => {
@@ -215,6 +269,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Вешаем курсор
   getCursor();
+
+  // Сбрасываем очки
   resetClicksAndScores();
 });
