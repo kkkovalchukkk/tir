@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tir</title>
+    <style>
+        @import url(https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap);
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            cursor: none;
+        }
+
+        html,
+        body {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background-image: url("./background.jpg");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            font-family: 'Archivo Black', sans-serif;
+            cursor: none;
+        }
+
+        .scores {
+            position: absolute;
+            top: 46px;
+            left: 43px;
+            color: #fff;
+            font-weight: 400;
+            font-size: clamp(14px, 2vw, 50px);
+            color: #fff;
+        }
+
+        .first-round {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .first-round__cols {
+            width: 100%;
+            height: 100%;
+            align-items: end;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            justify-items: center;
+        }
+
+        .target {
+            width: 100%;
+            max-width: 142px;
+            height: 100%;
+            max-height: 142px;
+            display: inline-block;
+            background-image: url("./bubble.png");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            user-select: none;
+            transition: .3s;
+        }
+
+        .first-round__target {
+            animation: down-to-up infinite 4s linear;
+        }
+
+        .first-round__target:nth-child(even) {
+            animation: up-to-down infinite 4s linear;
+        }
+
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .custom-cursor {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            user-select: none;
+        }
+
+        .custom-cursor img {
+            width: 96px;
+            height: 96px;
+        }
+
+        .win {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background-image: url("./background.jpg");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            z-index: 1000;
+
+        }
+
+        .win__text,
+        .lose__text {
+            color: #fff;
+            font-weight: 400;
+            font-size: clamp(14px, 2vw, 50px);
+            color: #fff;
+        }
+
+        .win__btn,
+        .lose__btn {
+            padding: 12px 16px;
+            border: 1px solid white;
+            text-transform: uppercase;
+            border-radius: 12px;
+            cursor: none;
+            transition: .3s;
+            font-weight: 800;
+        }
+
+        .win__btn:hover {
+            transform: scale(1.1);
+        }
+
+        .win__btn:active {
+            transform: scale(0.95);
+        }
+
+
+        .first-run {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("./first-run-background.jpg");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            z-index: 1000;
+            padding: 24px;
+            transition: .3s;
+        }
+
+        .first-run__top-text {
+            font-size: 50px;
+            color: #fff;
+            font-family: Arial;
+        }
+
+        .first-run__heading {
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: 900;
+            font-size: 50px;
+            color: #fff;
+            max-width: 595px;
+            margin-left: auto;
+            margin-top: 200px;
+            margin-right: 200px;
+        }
+
+        .first-run__btn {
+            padding: 18px 64px;
+            margin-left: auto;
+            display: block;
+            margin-right: 200px;
+            margin-top: 24px;
+            background-image: url("./background.jpg");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            border: none;
+            color: #fff;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+
+        .lose {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("./background.jpg");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .second-round {
+            width: 100%;
+            height: 100%;
+            padding-top: 200px;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .second-round__rows {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-rows: repeat(5, 1fr);
+        }
+
+        .second-round__target {
+            animation: left-to-right infinite 3s linear;
+
+        }
+
+        .second-round__target:nth-child(even) {
+            animation: right-to-left infinite 3s linear;
+
+        }
+
+
+        .third-round {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .third-round__target {
+            position: absolute;
+        }
+
+
+        @keyframes down-to-up {
+            0% {
+                transform: translateY(0vh);
+            }
+
+            50% {
+                transform: translateY(-70vh);
+            }
+
+            100% {
+                transform: translateY(0vh);
+            }
+        }
+
+        @keyframes up-to-down {
+            0% {
+                transform: translateY(-70vh);
+            }
+
+            50% {
+                transform: translateY(0vh);
+            }
+
+            100% {
+                transform: translateY(-70vh);
+            }
+        }
+
+        @keyframes left-to-right {
+            0% {
+                transform: translateX(92vw);
+            }
+
+            50% {
+                transform: translateX(0vw);
+            }
+
+            100% {
+                transform: translateX(92vw);
+            }
+        }
+
+        @keyframes right-to-left {
+            0% {
+                transform: translateX(0vw);
+            }
+
+            50% {
+                transform: translateX(92vw);
+            }
+
+            100% {
+                transform: translateX(0vw);
+            }
+        }
+
+        @media (max-height:1186px) {
+            .second-round {
+                padding-top: 24px;
+                padding-left: 15%;
+            }
+
+            @keyframes left-to-right {
+                0% {
+                    transform: translateX(75vw);
+                }
+
+                50% {
+                    transform: translateX(0vw);
+                }
+
+                100% {
+                    transform: translateX(75vw);
+                }
+            }
+
+            @keyframes right-to-left {
+                0% {
+                    transform: translateX(0vw);
+                }
+
+                50% {
+                    transform: translateX(75vw);
+                }
+
+                100% {
+                    transform: translateX(0vw);
+                }
+            }
+
+        }
+
+        @media (max-width:768px) {
+            .first-run__top-text {
+                font-size: clamp(24px, 32px, 48px);
+            }
+
+            .first-run__heading {
+                max-width: unset;
+                font-size: clamp(24px, 32px, 48px);
+                margin-top: 120px;
+                margin-right: 0;
+            }
+
+            .first-run__btn {
+                margin-right: 0;
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width:675px) {
+            .second-round {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="first-run">
+        <marquee loop="-1" bebehavior="scroll" scrollamount="24" class="first-run__top-text">
+            Ночь медитаций в центре. Ночь медитаций в центре. Ночь медитаций в центре.
+        </marquee>
+        <h1 class="first-run__heading">
+            Лопни пузырь
+            и попробуй выиграть
+            бесплатный билет
+        </h1>
+        <button class="first-run__btn">
+            Старт
+        </button>
+    </div>
+    <div class="win hidden">
+        <p class="win__text">
+            Молодец, снайпер! Продолжим?
+        </p>
+        <button class="win__btn">
+            Продолжить
+        </button>
+    </div>
+    <div class="lose hidden">
+        <p class="lose__text">
+            Ты проиграл,
+            попробуй ещё раз!
+        </p>
+        <button class="lose__btn">
+            Заново
+        </button>
+    </div>
+    <div class="scores">
+        <p class="scores-row">
+            SHOT: <span class="scores__shots">0</span>
+        </p>
+        <p class="scores-row">
+            SCORE: <span class="scores__goals">0</span>
+        </p>
+    </div>
+
+    <div class="first-round">
+        <div class="first-round__cols">
+            <div class="target first-round__target"></div>
+            <div class="target first-round__target"></div>
+            <div class="target first-round__target"></div>
+            <div class="target first-round__target"></div>
+            <div class="target first-round__target"></div>
+            <div class="target first-round__target"></div>
+        </div>
+    </div>
+
+    <div class="second-round hidden">
+        <div class="second-round__rows">
+            <div class="target second-round__target"></div>
+            <div class="target second-round__target"></div>
+            <div class="target second-round__target"></div>
+            <div class="target second-round__target"></div>
+            <div class="target second-round__target"></div>
+        </div>
+    </div>
+
+    <div class="third-round hidden">
+
+    </div>
+
+
+
+    <script src="./script.js"></script>
+</body>
+
+</html>
